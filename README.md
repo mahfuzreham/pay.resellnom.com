@@ -1,97 +1,58 @@
-# ResellPay
+<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
 
-ResellPay is the payment platform under the Resellnom brand.
+<p align="center">
+<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
+<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
+<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
+<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
+</p>
 
-## Product model
+## About Laravel
 
-### ResellPay Connect
-Merchants connect their own payment provider accounts and credentials. ResellPay acts as the orchestration/integration layer.
+Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
 
-Supported/target providers:
-- bKash
-- Nagad
-- SurjoPay
-- Stripe
-- Future providers through adapters
+- [Simple, fast routing engine](https://laravel.com/docs/routing).
+- [Powerful dependency injection container](https://laravel.com/docs/container).
+- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
+- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
+- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
+- [Robust background job processing](https://laravel.com/docs/queues).
+- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
 
-### ResellPay Gateway
-Merchants may use a ResellPay-managed payment gateway where available. Managed processing includes transaction ledgering, fees, settlement scheduling and payout configuration.
+Laravel is accessible, powerful, and provides tools required for large, robust applications.
 
-## Domains
+## Learning Laravel
 
-- `pay.resellnom.com` — core payment API/gateway
-- `app.resellnom.com` — merchant dashboard
-- `checkout.resellnom.com` — customer checkout
-- `docs.resellnom.com` — developer documentation
+Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
 
-## Core architecture
+In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
 
-```text
-Merchant / Customer
-        |
-        v
-   ResellPay API
-        |
-   Payment Router
-        |
-   Gateway Adapter
-   /   |    |    \
- bKash Nagad SurjoPay Stripe
-        |
-        v
- Transaction + Ledger
-        |
- Settlement Engine
-        |
- Bank / Supported Payout Method
+You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
+
+## Agentic Development
+
+Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
+
+```bash
+composer require laravel/boost --dev
+
+php artisan boost:install
 ```
 
-## Merchant gateway modes
+Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
 
-`CLIENT_OWNED` — merchant's own provider credentials/account.
+## Contributing
 
-`RESELLPAY` — ResellPay-managed gateway and settlement flow.
+Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
 
-Provider credentials must never be stored as plaintext. Use encrypted application secrets and strict access controls.
+## Code of Conduct
 
-## Settlement
+In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
 
-The managed gateway is designed around configurable settlement rules. Initial business policy: **T+3 working days**, with weekends and applicable bank holidays excluded according to the final settlement calendar and provider/banking agreement.
+## Security Vulnerabilities
 
-Settlement destinations are merchant-configured, such as an eligible bank account or supported payout method.
+If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
 
-## Financial integrity
+## License
 
-Use an append-only ledger for money movement. Store monetary values as integer minor units rather than floating point. Payment creation must support idempotency keys to prevent duplicate charges.
-
-## Security baseline
-
-- API key authentication
-- Secret/API key rotation and revocation
-- Webhook signatures and replay protection
-- Idempotency keys
-- Rate limiting
-- RBAC and 2FA for privileged users
-- Encrypted gateway credentials
-- Audit logs
-- Strict separation of merchant data
-
-## Laravel implementation direction
-
-Recommended bounded domains:
-
-- Payments
-- Merchants
-- Gateways
-- Transactions
-- Ledger
-- Settlements
-- Refunds
-- Webhooks
-- API Keys
-
-Gateway providers should implement a common `PaymentGatewayInterface` so provider-specific code remains isolated.
-
-## Important compliance note
-
-The ResellPay-managed gateway/settlement model must be launched only with the appropriate payment-provider, banking, regulatory, KYC/KYB, AML and funds-settlement arrangements. Software architecture does not itself establish authorization to hold or settle customer funds.
+The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
