@@ -1,0 +1,52 @@
+name: Bootstrap Laravel App
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  bootstrap:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          extensions: mbstring, dom, fileinfo, pdo, pdo_mysql, openssl, curl
+          coverage: none
+
+      - name: Install Composer
+        run: composer install --no-interaction --prefer-dist
+        if: hashFiles('composer.json') != ''
+
+      - name: Create Laravel skeleton
+        if: hashFiles('artisan') == ''
+        run: |
+          rm -rf /tmp/resellpay
+          composer create-project laravel/laravel /tmp/resellpay --no-interaction
+          cp -a /tmp/resellpay/. .
+          rm -rf /tmp/resellpay/.git
+
+      - name: Ensure project files
+        run: |
+          mkdir -p app/Domain/{Payments,Merchants,Gateways,Transactions,Settlements,Ledger,Webhooks}
+          mkdir -p app/Services
+          mkdir -p app/Gateways/{Contracts,Bkash,Nagad,SurjoPay,Stripe}
+          mkdir -p database/seeders
+          touch app/Domain/Payments/.gitkeep app/Domain/Merchants/.gitkeep app/Domain/Gateways/.gitkeep app/Domain/Transactions/.gitkeep app/Domain/Settlements/.gitkeep app/Domain/Ledger/.gitkeep app/Domain/Webhooks/.gitkeep app/Services/.gitkeep app/Gateways/Contracts/.gitkeep app/Gateways/Bkash/.gitkeep app/Gateways/Nagad/.gitkeep app/Gateways/SurjoPay/.gitkeep app/Gateways/Stripe/.gitkeep
+
+      - name: Commit generated application
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -A
+          git diff --cached --quiet || git commit -m 'chore: initialize Laravel application'
+          git push
